@@ -61,6 +61,7 @@ const authenticate = async (userToken, sessionToken) => {
     return false;
   }
 };
+const inputTypes = ['shortText','longText','files','radioButton','checkbox'];
 
 
 module.exports = {
@@ -69,4 +70,5 @@ module.exports = {
   stringRand,
   makeToken,
   authenticate,
+  inputTypes
 };

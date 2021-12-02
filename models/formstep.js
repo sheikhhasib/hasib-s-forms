@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
-const formsSchema = mongoose.Schema({
+const formStepSchema = mongoose.Schema({
     'token' : { 
+        type : String
+    },
+    'formToken' : { 
         type : String
     },
     'title' : { 
@@ -13,10 +16,13 @@ const formsSchema = mongoose.Schema({
     'status' : {
         type : String
     },
-    'createdBy' : {
+    'previousStepToken' : {
         type : String
     },
-    'sessionToken' : {
+    'nextStepToken' : {
+        type : String
+    },
+    'createdBy' : {
         type : String
     },
     'existence' : {
@@ -27,4 +33,4 @@ const formsSchema = mongoose.Schema({
 })
 
 
-module.exports = mongoose.model('Forms', formsSchema);
+module.exports = mongoose.model('FormStep', formStepSchema);
