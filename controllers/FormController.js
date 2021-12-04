@@ -35,7 +35,7 @@ module.exports = {
           status: "Active",
           previousStepToken: "",
           nextStepToken: "",
-          createdBy : usertoken,
+          createdBy: usertoken,
           existence: 1,
         });
 
@@ -68,7 +68,7 @@ module.exports = {
           },
         });
       }
-      if(inputTypes.includes(inputType) === false){
+      if (inputTypes.includes(inputType) === false) {
         proceed = false;
         res.send({
           type: "error",
@@ -77,8 +77,12 @@ module.exports = {
           },
         });
       }
-      const checkFromStep = await FormStepModel.find({token : stepToken ,formToken : formToken, createdBy : usertoken});
-      if(checkFromStep.length !== 1){
+      const checkFromStep = await FormStepModel.find({
+        token: stepToken,
+        formToken: formToken,
+        createdBy: usertoken,
+      });
+      if (checkFromStep.length !== 1) {
         proceed = false;
         res.send({
           type: "error",
@@ -87,32 +91,100 @@ module.exports = {
           },
         });
       }
-      if(proceed){
+      if (proceed) {
         const newFormItem = await FormItemModel.create({
-          token : makeToken({label : "formItem"}),
-          formToken : formToken,
-          stepToken : stepToken,
-          image : image,
-          title : title,
-          inputType : inputType,
-          required : required,
-          status : 'Active',
-          createdBy : usertoken,
-          sessionToken : sessiontoken,
-          existence : 1
+          token: makeToken({ label: "formItem" }),
+          formToken: formToken,
+          stepToken: stepToken,
+          image: image,
+          title: title,
+          inputType: inputType,
+          required: required,
+          status: "Active",
+          createdBy: usertoken,
+          sessionToken: sessiontoken,
+          existence: 1,
         });
         res.send({
           type: "success",
           data: {
             message: "From Item Created Successfully",
           },
-        })
+        });
       }
     } catch (error) {
       console.log(error);
       res.send({
         type: "error",
         data: error,
+      });
+    }
+  },
+  createFormStep: async (req, res) => {
+    try {
+      const { usertoken, sessiontoken } = req.headers;
+    const { formToken, stepToken, title, details } = req.body;
+    let proceed = true;
+    if (authenticate(usertoken, sessiontoken) === false) {
+      proceed = false;
+      res.send({
+        type: "error",
+        data: {
+          message: "Oops! Session Token Mismatched",
+        },
+      });
+    }
+    const checkFromStep = await FormStepModel.find({
+      token: stepToken,
+      formToken: formToken,
+      createdBy: usertoken,
+    })
+      .sort({ createdAt: "desc" })
+      .limit(1)
+      .exec();
+    if (checkFromStep.length === 1) {
+      let nextStepToken = makeToken({ label: "formStep" });
+      const newUpdatedStep = await FormStepModel.findOneAndUpdate(
+        { token: stepToken },
+        {
+          $set: {
+            title: title,
+            details: details,
+            nextStepToken: nextStepToken,
+          },
+        },
+        { new: true }
+      );
+      await FormStepModel.create({
+        token: nextStepToken,
+        formToken: formToken,
+        title: "",
+        details: "",
+        status: "Active",
+        previousStepToken: stepToken,
+        nextStepToken: "",
+        createdBy: usertoken,
+        existence: 1,
+      });
+      res.send({
+        type: "success",
+        data: {
+          message: "Step Updated Successfully and Create New Step",
+        },
+      });
+    }else{
+      res.send({
+        type: "error",
+        data: {
+          message: "Previous Step Not Found",
+        },
+      });
+    }
+    } catch (error) {
+      console.log(error)
+      res.send({
+        type: "error",
+        data: error
       });
     }
   },
