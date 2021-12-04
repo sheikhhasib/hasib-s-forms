@@ -138,6 +138,7 @@ module.exports = {
       token: stepToken,
       formToken: formToken,
       createdBy: usertoken,
+      nextStepToken : ""
     })
       .sort({ createdAt: "desc" })
       .limit(1)
@@ -178,7 +179,7 @@ module.exports = {
         data: {
           message: "Previous Step Not Found",
         },
-      });
+      }); 
     }
     } catch (error) {
       console.log(error)
