@@ -2,6 +2,14 @@ const express = require('express')
 const mongoose = require('mongoose')
 const app = express();
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.header("Access-Control-Allow-Headers", "*");
+    next();
+});
+
 app.use(express.json({
     limit : '100 mb'
 }))

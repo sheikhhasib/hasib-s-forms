@@ -12,5 +12,8 @@ Router.post("/account/logout", UserController.logout);
 Router.post("/forms/create", FormController.createForms);
 Router.post("/forms/item/new", FormController.createFormItem);
 Router.post("/forms/step/create", FormController.createFormStep);
+Router.post("/forms/item/options/create", FormController.itemOptionsCreate);
+Router.post("/forms/item/positionKey/update", FormController.itemPositionKeyUpdateBulk);
+Router.get("/forms/load/:formToken/:stepToken", FormController.formLoad);
 
 module.exports = Router
